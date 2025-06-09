@@ -67,7 +67,7 @@ public class TestCases {
         //declaring explicit wait
         WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(10));
         
-        //navigate to URL -
+        //navigate to URL google form-
         String url="https://docs.google.com/forms/u/0/d/e/1FAIpQLSep9LTMntH5YqIXa5nkiPKSs283kdwitBBhXWyZdAS-e4CxBQ/formResponse";
         openURL(url);
 

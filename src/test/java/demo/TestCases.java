@@ -23,12 +23,13 @@ import static demo.wrappers.Wrappers.*;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.logging.Level;
 // import io.github.bonigarcia.wdm.WebDriverManager;
 //import demo.wrappers.Wrappers;
 
 public class TestCases {
-    public static ChromeDriver driver;
+    ChromeDriver driver;
 
     /*
      * TODO: Write your tests here with testng @Test annotation. 
@@ -69,38 +70,51 @@ public class TestCases {
         
         //navigate to URL google form-
         String url="https://docs.google.com/forms/u/0/d/e/1FAIpQLSep9LTMntH5YqIXa5nkiPKSs283kdwitBBhXWyZdAS-e4CxBQ/formResponse";
-        openURL(url);
+        openURL(driver,url);
 
         //Enter Name field- textbox
-        WebElement nameBox=driver.findElement(By.xpath("(//div[@class='Qr7Oae'])[1]//input")) ;
+        WebElement nameBox=driver.findElement(By.xpath("(//div[contains(@class,'Qr')])[1]//input")) ;
         enterText(nameBox,"Crio Learner");
 
         //Enter Answer to Why are you practicing Automation?
-        WebElement participateBox=driver.findElement(By.xpath("(//div[@class='Qr7Oae'])[2]//textarea"));
-        long epoch = System.currentTimeMillis()/1000;
-        enterText(participateBox,"I want to be the best QA Engineer! "+epoch);
+        WebElement participateBox=driver.findElement(By.xpath("//div[contains(@class,'Pc')]/textarea"));
+        long epoch = getEpochTime();
+        enterText(participateBox,"I want to be the best QA Engineer! "+String.valueOf(epoch));
 
         //select Radio button for How much experience do you have in Automation Testing?
-        WebElement experienceRadio=driver.findElement(By.xpath("(//div[@class='Qr7Oae'])[3]//div[@class='d7L4fc bJNwt  FXLARc aomaEc ECvBRb']"));
-        selectItem(experienceRadio);
+        //select 3-5 option from radio button
+        //Approach 3- correct approach but its hard coded
+        //WebElement experienceRadio=driver.findElement(By.xpath("(//div[@class='Qr7Oae'])[3]//div[@class='d7L4fc bJNwt  FXLARc aomaEc ECvBRb']"));
+        //selectItem(experienceRadio);
+        //Approach 1 - send selection as parameter and create method to select radio button , send list of radio buttons and option to select
+
+        List<WebElement> radioList=driver.findElements(By.xpath("//span[contains(@class,'OvPDhc')]"));
+        selectRadioOption(radioList,"3-5");
+
 
         //Select Java, Selenium and TestNG from the next check-box
-        WebElement javaElement=driver.findElement(By.xpath("(//div[@class='Qr7Oae'])[4]//span[ text()='Java']"));
-        WebElement seleniumElement=driver.findElement(By.xpath("(//div[@class='Qr7Oae'])[4]//span[ text()='Selenium']"));
-        WebElement TestNGElement=driver.findElement(By.xpath("(//div[@class='Qr7Oae'])[4]//span[ text()='TestNG']"));
+        WebElement javaElement=driver.findElement(By.xpath("(//div[contains(@class,'Qr')])[4]//span[ text()='Java']"));
+        WebElement seleniumElement=driver.findElement(By.xpath("(//div[contains(@class,'Qr')])[4]//span[ text()='Selenium']"));
+        WebElement TestNGElement=driver.findElement(By.xpath("(//div[contains(@class,'Qr')])[4]//span[ text()='TestNG']"));
          
         selectItem(javaElement);
         selectItem(seleniumElement);
         selectItem(TestNGElement);
 
         //select from dropdown how u should be addressed
-        WebElement chooseElement=driver.findElement(By.xpath("//span[text()='How should you be addressed?']//following::div[@class='e2CuFe eU809d'][1]"));
+        WebElement chooseElement=driver.findElement(By.xpath("(//div[contains(@class,'kXd')])[1]"));
         selectItem(chooseElement);
-        WebElement saluteElement=wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='OA0qNb ncFHed QXL7Te']//div[@class='MocG8c HZ3kWc mhLiyf OIC90c LMgvRb'][2]")));
-        selectItem(saluteElement);
+        //Approach 2 -select option directly
+        //WebElement saluteElement=wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class='OA0qNb ncFHed QXL7Te']//div[@class='MocG8c HZ3kWc mhLiyf OIC90c LMgvRb'][2]")));
+        //selectItem(saluteElement);
+
+        //Approach 1 - send choice as parameter and select from list
+        List<WebElement> saluteList=wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[contains(@class,'ncFHed')]//span[not (contains(text(),'Choose'))]")));
+        selectdropdownOption(saluteList,"Dr");
+
 
         //what was the date 7 days ago
-        WebElement dateElement=driver.findElement(By.xpath("//span[text()='What was the date 7 days ago?']//following::input[1]"));
+        WebElement dateElement=driver.findElement(By.xpath("//input[contains(@class,'zHQkBf') and @type='date']"));
         LocalDate currentDate=LocalDate.now();
         DateTimeFormatter oldFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         System.out.println("current date ............. "+currentDate);
@@ -111,16 +125,16 @@ public class TestCases {
         enterText(dateElement,date);
 
         //Enter Time in the hh:mm format
-        WebElement hourElement =driver.findElement(By.xpath("//span[text()='What is the time right now?']//following::input[1]"));
-        enterText(hourElement,"7");
-        WebElement minElement =driver.findElement(By.xpath("//span[text()='What is the time right now?']//following::input[2]"));
+        WebElement hourElement =driver.findElement(By.xpath("//input[contains(@class,'zHQkBf') and @aria-label='Hour']"));
+        enterText(hourElement,"07");
+        WebElement minElement =driver.findElement(By.xpath("//input[contains(@class,'zHQkBf') and @aria-label='Minute']"));
         enterText(minElement,"30");
 
         //click on Submit
-        WebElement submitElement=driver.findElement(By.xpath("//div[@role='button']//child::span[text()='Submit']"));
+        WebElement submitElement=driver.findElement(By.xpath("//span[text()='Submit']"));
         selectItem(submitElement);
         wait.until(ExpectedConditions.urlContains("formResponse"));
-        WebElement respElement=driver.findElement(By.xpath("//div[@class='vHW8K']"));
+        WebElement respElement=driver.findElement(By.xpath("//div[contains(@class,'vHW')]"));
         System.out.println("Response" +respElement.getText());
         
         
